@@ -1,12 +1,13 @@
 {
   "name": "dsh-session-rotate",
-  "version": "0.2.1",
-  "description": "DSH context auto-rotation: turn-size and peak-size triggers, handoff excerpt + backup, new session handoff, archive the old one.",
+  "version": "0.3.0",
+  "description": "DSH context auto-rotation: turn-size and peak-size triggers, handoff excerpt + backup, new session handoff, archive the old one; plus a tiny water-level meter.",
   "license": "MIT",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
     ".": "./lib/index.js",
+    "./client": "./lib/client.js",
     "./package.json": "./package.json"
   },
   "files": [
@@ -21,7 +22,8 @@
     "context",
     "session",
     "rotate",
-    "compaction"
+    "compaction",
+    "widget"
   ],
   "engines": {
     "node": ">=22"
@@ -30,6 +32,9 @@
     "manifestVersion": 1,
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
     }
   }
 }
