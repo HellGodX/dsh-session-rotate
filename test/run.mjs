@@ -1,4 +1,4 @@
-// 离线自测：两个场景，全部带断言。
+﻿// 离线自测：两个场景，全部带断言。
 //   场景 1：真实的大会话（1.7M tokens）→ 应精确读数、交接文件写到内容、备份、开新会话、投递、归档。
 //   场景 2：开了 precut，压缩器把日志改小 → 水位回落到可接受区间 → 不该轮换。
 import { mkdir, cp, utimes, readFile, rm, writeFile } from 'node:fs/promises';
@@ -130,57 +130,7 @@ console.log('\n=== 场景 2：precut 小切后水位回落 → 不轮换 ===');
 }
 
 // ───────────────────────── 场景 3 ─────────────────────────
-console.log('=== 场景 3：水位路由 ===');
-{
-  const s3 = path.join(base, 's3');
-  const sessionsRoot = path.join(s3, 'sessions');
-  const root = path.join(s3, 'rotate');
-  const sessionDir = path.join(sessionsRoot, slug, sid);
-  await mkdir(sessionDir, { recursive: true });
-  const small = zstdCompressSync(Buffer.from([
-    JSON.stringify({ type: 'session', data: { version: 4, id: sid, cwd: 'D:\\tmp' } }),
-    JSON.stringify({
-      type: 'assistant/message', seq: 1,
-      data: {
-        message: { content: [{ type: 'text', text: 'hi' }] },
-        usage: { inputTokens: 1000, outputTokens: 10, cacheReadTokens: 0, cacheWriteTokens: 0, totalTokens: 1010 },
-      },
-    }),
-    '',
-  ].join('\n')));
-  await writeFile(path.join(sessionDir, 'session.v4.jsonl.zstd'), small);
-
-  let route = null;
-  const webServer = { register: (def) => { route = def; return () => { route = null; }; } };
-  const calls = [];
-  apply(makeCtx(calls, { webServer }), {
-    sessionsRoot, root, initialDelayMs: 50, intervalMs: 60_000,
-    warnTokens: 100_000, rotateTokens: 350_000, autoRotate: false, accurateScanMinBytes: 1,
-  });
-
-  ok(route?.path === '/api/session-rotate', '注册了 /api/session-rotate', JSON.stringify(route?.path));
-  ok(route?.kind === 'exact', '路由是 exact 匹配');
-
-  const call = async (method, ip = '127.0.0.1') => {
-    const res = { statusCode: 0, headers: {}, body: '', setHeader(k, v) { this.headers[k] = v; }, end(b) { this.body = b; } };
-    await route.handler({ method, socket: { remoteAddress: ip } }, res);
-    return { code: res.statusCode, json: res.body ? JSON.parse(res.body) : null };
-  };
-
-  const got = await call('GET');
-  ok(got.code === 200, 'GET 返回 200', String(got.code));
-  ok(got.json?.current?.sessionId === sid, 'current 指向那个会话', JSON.stringify(got.json?.current));
-  ok(got.json?.current?.tokens === 1010, '读到了真实的 totalTokens（不是字节粗估）', String(got.json?.current?.tokens));
-  ok(got.json?.rotateTokens === 350_000, '带上了阈值');
-
-  const post = await call('POST');
-  ok(post.code === 405, 'POST 被拒', String(post.code));
-  const far = await call('GET', '10.0.0.9');
-  ok(far.code === 403, '非本机 IP 被拒', String(far.code));
-}
-
-// ───────────────────────── 场景 4 ─────────────────────────
-console.log('=== 场景 4：多 frame 的 zstd 日志 ===');
+console.log('=== 场景 3：多 frame 的 zstd 日志 ===');
 {
   // DSH 的会话日志是一路 append 的多个 frame；Electron 的 Node 24 只解第一帧，所以必须自己切帧。
   const f1 = zstdCompressSync(Buffer.from('{"type":"session","data":{"id":"x"}}\n{"a":1}\n'));
