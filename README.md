@@ -61,6 +61,7 @@ precut:
 | `rotateTokens` | `350000` | 当前水位阈值（窗口 1048576，预留输出 256000，实际可用约 790000，350000 留足余量） |
 | `peakRotateTokens` | `525000` | 历史峰值阈值：到过这里说明压缩已到极限 |
 | `activeGraceMs` | `600000` | 多久没写才算「安静」 |
+| `promptTimeoutMs` | `30000` | 投递开局消息用 `AbortSignal.timeout(ms)`；`prompt(request, signal)` 的 signal 必填，0.2.0 漏传会 `Cannot read properties of undefined (reading 'throwIfAborted')` |
 | `tokensPerByte` | `0.112` | 字节 → token 的兜底系数（只有拿不到 usage 时才用；真实数据标定 15,598,487 字节 ≈ 1,746,361 tokens） |
 | `accurateScanMinBytes` | `1500000` | 超过这个大小才解压全文做精确读数 |
 | `autoRotate` | `true` | `false` 时只写交接 + 备份，不动会话 |
