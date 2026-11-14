@@ -1,4 +1,4 @@
-﻿- insert:
+- insert:
     - id: session-rotate
       name: dsh-session-rotate
       config:
@@ -6,9 +6,21 @@
         intervalMs: 60000
         warnTokens: 200000
         rotateTokens: 350000
+        peakRotateTokens: 525000
         activeGraceMs: 600000
         tokensPerByte: 0.112
+        accurateScanMinBytes: 1500000
         autoRotate: true
         dryRun: false
         exclude: []
-
+        handoff:
+          messages: 5
+          files: 10
+          commands: 5
+          chars: 240
+        precut:
+          enabled: false
+          service: ""
+          method: ""
+          timeoutMs: 90000
+          acceptRatio: 0.85
