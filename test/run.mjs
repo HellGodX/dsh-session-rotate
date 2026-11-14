@@ -34,7 +34,7 @@ function makeCtx(calls, extra = {}) {
     logger: { info: () => {} },
     sessionController: {
       agents: { createSession: async (req) => { calls.push(['createSession', req]); return { agent: { session: { id: NEW_ID } } }; } },
-      prompt: async (req) => { calls.push(['prompt', req]); },
+      prompt: async (req, signal) => { calls.push(['prompt', req, signal]); },
     },
     workspaceController: { archiveSession: async (req) => { calls.push(['archiveSession', req]); } },
     ...extra,
@@ -84,6 +84,11 @@ await rm(base, { recursive: true, force: true });
   const promptText = calls.find((c) => c[0] === 'prompt')?.[1]?.content?.[0]?.text ?? '';
   ok(promptText.includes(rec.handoff), '开局消息指向交接文件');
   ok(promptText.includes(rec.backup), '开局消息指向备份目录');
+
+  // prompt(request, signal)：真机上缺 signal 会 TypeError: 'throwIfAborted' of undefined
+  const promptSignal = calls.find((c) => c[0] === 'prompt')?.[2];
+  ok(promptSignal instanceof AbortSignal, '给 prompt 传了 AbortSignal');
+  ok(typeof promptSignal?.throwIfAborted === 'function' && !promptSignal.aborted, 'signal 可用且未中止');
   ok((await readFile(file)).length > 1_000_000, '原日志没被删掉');
 
   const audit = await readFile(path.join(root, 'audit.log'), 'utf8');

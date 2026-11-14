@@ -1,7 +1,7 @@
 {
   "name": "dsh-session-rotate",
-  "version": "0.2.0",
-  "description": "上下文自动轮换：精确读数（usage 当前水位 + 历史峰值），到阈值先写交接文件并整目录备份，再新建会话迁移过去，最后归档旧会话；可选轮换前先让小切压缩器试一次。",
+  "version": "0.2.1",
+  "description": "DSH context auto-rotation: turn-size and peak-size triggers, handoff excerpt + backup, new session handoff, archive the old one.",
   "license": "MIT",
   "type": "module",
   "main": "lib/index.js",
