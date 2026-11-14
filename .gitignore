@@ -1,3 +1,7 @@
 ﻿_tmp_sr/
 node_modules/
 *.log
+
+# 测试输出
+_t.*
+_tmp_sr/
