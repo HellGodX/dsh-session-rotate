@@ -1,0 +1,14 @@
+﻿- insert:
+    - id: session-rotate
+      name: dsh-session-rotate
+      config:
+        enabled: true
+        intervalMs: 60000
+        warnTokens: 200000
+        rotateTokens: 350000
+        activeGraceMs: 600000
+        tokensPerByte: 0.112
+        autoRotate: true
+        dryRun: false
+        exclude: []
+

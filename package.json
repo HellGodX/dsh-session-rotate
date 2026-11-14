@@ -1,0 +1,35 @@
+{
+  "name": "dsh-session-rotate",
+  "version": "0.1.0",
+  "description": "上下文自动轮换：检测会话 token 用量，到阈值先写交接文件并整目录备份，再新建会话迁移过去，最后归档旧会话。",
+  "license": "MIT",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "keywords": [
+    "deepseek",
+    "dsh",
+    "plugin",
+    "context",
+    "session",
+    "rotate",
+    "compaction"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
